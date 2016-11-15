@@ -1,0 +1,73 @@
+package com.example.android.urb;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.TextView;
+
+import static com.example.android.urb.R.id.countSec;
+import static com.example.android.urb.R.id.countTap;
+
+public class MainActivity extends AppCompatActivity {
+
+    //variables
+    int seconds = 0;
+    int taps = 0;
+    TextView counterSec;
+    TextView counterTap;
+    boolean firstTime = true;
+
+    Handler handler = new Handler(); //operator for runnable
+    
+    //RUNNABLE (function to handle)
+    
+    Runnable r = new Runnable() {
+        @Override
+        public void run() {
+            counterSec = (TextView)findViewById(countSec);
+            counterSec.setText(Integer.toString(seconds));
+            seconds++;
+            handler.postDelayed(r, 1000);
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_main);
+    }
+
+    //START BUTTON
+    public void start(View view){
+
+        taps++;
+        counterTap = (TextView)findViewById(countTap);
+        counterTap.setText(Integer.toString(taps));
+
+        //check if button was pressed for the first time
+        if (firstTime){
+            handler.post(r);
+            firstTime = false;
+        }
+
+    }
+
+    //STOP BUTTON
+    public void stop(View view){
+
+        handler.removeCallbacks(r);
+        firstTime = true;
+        seconds = 0;
+        taps = 0;
+        counterSec = (TextView)findViewById(countSec);
+        counterSec.setText(Integer.toString(seconds));
+
+        counterTap = (TextView)findViewById(countTap);
+        counterTap.setText(Integer.toString(taps));
+    }
+
+}
